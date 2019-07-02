@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>reveal.js</title>
+
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/moon.css">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/monokai.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<h2>Introducción al Desarrollo con Docker y Drupal</h2>
+				<img src="images/drupal-docker.jpg">
+			</section>
+
+			<section data-markdown>
+				<textarea data-template>
+# Presentación
+## Juan Miguel Sosso
+@jmsosso
+
+https://jmsosso.drupal.network/
+				</textarea>
+			</section>
+
+			<section>
+				<section>
+					<h1>Introducción a Docker</h1>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+## Imágenes
+- Contienen todo lo necesario para correr nuestra aplicación:
+	- Dependencias
+	- Archivos de configuración
+	- Variables de entorno
+	- Código (no para desarrollar)
+- Son estáticas y están formadas por capas
+- Imágenes públicas: [Docker Hub](https://hub.docker.com/search?q=&type=image)
+- Crear nuestras imágenes
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+## Dockerfile
+```
+# Use an official Python runtime as a parent image
+FROM python:2.7-slim
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Define environment variable
+ENV NAME World
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+## Contenedores
+- Se crean a partir de una imagen
+- Son ligeros (no virtualización)
+- Son efímeros
+- Un solo servicio por contenedor
+- Múltiples contenedores de la misma imagen
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+## Volúmenes
+- Se utilizan para mantener los datos fuera de los contenedores
+- Pueden mapear un directorio del sistema de archivos o tener un nombre propio
+- Por ejemplo `/var/lib/mysql` para el contenedor de MySQL
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+## Puertos y subredes
+![Docker network](images/docker-network.png)
+- Los contenedores corren en su propia red
+- Se mapean los puertos necesarios al host
+					</textarea>
+				</section>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+# Demo
+
+Correr la [imagen oficial de Drupal](https://hub.docker.com/_/drupal).
+- nombre:tag (por defecto latest)
+- vendor/nombre:tag
+```
+docker run --rm -p 8080:80 drupal
+```
+- Ejecución en segundo plano
+```
+docker ps -a
+docker stop
+docker rm
+docker start
+```
+        </textarea>
+			</section>
+			<section>
+				<section>
+					<h1>Introducción a Docker Compose</h1>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+## docker-compose.yml
+- Servicios: [MySQL](https://hub.docker.com/_/mysql) - [phpMyAdmin](https://hub.docker.com/r/phpmyadmin/phpmyadmin)
+- Volúmenes
+- Redes
+```
+version: '3'
+services:
+  web:
+    image: "drupal"
+    ports:
+      - "8081:80"
+  db:
+    image: "mysql"
+```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+## demo
+```
+docker-compose up -d
+docker-compose ps
+docker-compose stop | down
+```
+					</textarea>
+				</section>
+			</section>
+
+			<section data-markdown>
+				<textarea data-template>
+# Bonus
+
+https://github.com/owncloud-docker/server
+```
+docker run --rm -p 8084:8080 owncloud/server
+```
+				</textarea>
+			</section>
+
+			<section>
+<h1>¿Preguntas?</h1>
+<img alt="Preguntas" src="images/questions.gif" style="height: 300px">
+			</section>
+		</div>
+	</div>
+
+	<script src="js/reveal.js"></script>
+
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+			hash: true,
+			dependencies: [
+				{ src: 'plugin/markdown/marked.js' },
+				{ src: 'plugin/markdown/markdown.js' },
+				{ src: 'plugin/notes/notes.js', async: true },
+				{ src: 'plugin/highlight/highlight.js', async: true }
+			]
+		});
+	</script>
+</body>
+
+</html>
